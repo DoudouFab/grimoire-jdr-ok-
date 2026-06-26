@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grimoire Audio JDR Pro</title>
+    <style>
+        :root {
+            --bg-color: #0b0d10;
+            --panel-bg: #12161f;
+            --card-bg: #171d27;
+            --card-hover: #1e2633;
+            --gold: #cfa830;
+            --gold-bright: #f6e4a0;
+            --accent-play: #219653;
+            --accent-stop: #c0392b;
+            --text-color: #cbd5e1;
+            --text-title: #ffffff;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(circle at center, #171f2c 0%, #0b0d10 100%);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 1px dashed var(--gold);
+            padding-bottom: 15px;
+        }
+
+        h1 { 
+            margin: 0; 
+            font-size: 2.2rem; 
+            color: var(--gold); 
+            letter-spacing: 3px;
+            font-weight: normal;
+        }
+
+        h2 { 
+            font-family: 'Segoe UI', sans-serif;
+            border-bottom: 2px solid var(--gold); 
+            padding-bottom: 8px; 
+            margin-top: 0; 
+            font-size: 1.3rem; 
+            color: #fff;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1100px) {
+            .container { grid-template-columns: 1fr 1fr; }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            border: 1px solid #1f2735;
+        }
+
+        .master-controls {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #07090d;
+            padding: 15px 25px;
+            border-radius: 10px;
+            gap: 20px;
+            border: 1px solid var(--gold);
+        }
+
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            max-height: 75vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .sound-grid::-webkit-scrollbar { width: 6px; }
+        .sound-grid::-webkit-scrollbar-thumb { background: #2c3e50; border-radius: 4px; }
+
+        .sound-card {
+            background: var(--card-bg);
+            border: 1px solid #232c3d;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .sound-card:hover {
+            background-color: var(--card-hover);
+            border-color: #323f57;
+        }
+
+        .sound-card.playing {
+            border-color: var(--accent-play);
+            background: #111e17;
+        }
+
+        /* TITRES GRANDS ET VISUELS */
+        .sound-title-block {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #232c3d;
+            padding-bottom: 4px;
+        }
+
+        .sound-title {
+            font-size: 1.35rem; /* Titre plus grand */
+            font-weight: bold;
+            color: var(--text-title);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .sound-card.playing .sound-title {
+            color: var(--gold-bright);
+        }
+
+        .sound-id {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--gold);
+            background: rgba(207, 168, 48, 0.1);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        /* CONTROLES MINIATURISÉS ET BOUTONS DISCRETE */
+        .controls-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn {
+            font-family: sans-serif;
+            border: none;
+            padding: 4px 2px; /* Boutons plus petits */
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.1s;
+            text-align: center;
+        }
+
+        .btn-play {
+            background: #1e271f;
+            color: #2ecc71;
+            border: 1px solid #27ae6044;
+            flex: 2;
+        }
+        .btn-play:hover {
+            background: var(--accent-play);
+            color: white;
+        }
+
+        .btn-stop {
+            background: #2c1a1a;
+            color: #e74c3c;
+            border: 1px solid #c0392b44;
+            flex: 1;
+        }
+        .btn-stop:hover {
+            background: var(--accent-stop);
+            color: white;
+        }
+
+        .btn-loop {
+            background: #1b222e;
+            color: #7f8c8d;
+            border: 1px solid #283446;
+            flex: 1.5;
+            font-size: 0.7rem;
+        }
+        .btn-loop:hover { color: white; background: #253042; }
+        .btn-loop.active {
+            background: #1a364a;
+            color: #3498db;
+            border-color: #2980b9;
+        }
+
+        .vol-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            color: #526375;
+        }
+
+        .vol-control input[type="range"] {
+            flex: 1;
+            accent-color: var(--gold);
+            height: 3px;
+            background: #10141b;
+            cursor: pointer;
+        }
+
+        .delay-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.65rem;
+            color: #526375;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .delay-control select {
+            background: #171d27;
+            color: #cbd5e1;
+            border: 1px solid #283446;
+            font-size: 0.65rem;
+            border-radius: 2px;
+            padding: 1px;
+            cursor: pointer;
+        }
+
+        .btn-master-stop {
+            background: var(--accent-stop);
+            color: white;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-master-stop:hover { background: #ba2616; box-shadow: 0 0 15px rgba(192, 57, 43, 0.4); }
+
+        .sub-category {
+            grid-column: 1 / -1;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            color: var(--gold);
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            border-left: 3px solid var(--gold);
+            padding-left: 8px;
+        }
+        .sub-category:first-of-type { margin-top: 0; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📜 GRIMOIRE AUDIO — COMPAGNON DE JDR</h1>
+    </header>
+
+    <div class="container">
+        
+        <div class="master-controls">
+            <button class="btn-master-stop" onclick="stopAllSounds()">🛑 SILENCE ABSOLU (STOP TOUT)</button>
+            <div class="vol-control" style="width: 260px; color: white; font-weight: bold; font-family: sans-serif;">
+                <span>🔊 VOLUME GÉNÉRAL :</span>
+                <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.8" oninput="updateGlobalVolume(this.value)">
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>🎵 Ambiances Continues & Émotions</h2>
+            <div class="sound-grid" id="ambient-grid"></div>
+        </div>
+
+        <div class="panel">
+            <h2>💥 Déclencheurs & Effets Ponctuels</h2>
+            <div class="sound-grid" id="oneshot-grid"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Liste propre pointant vers les fichiers renommés en .mp3
+        const ambients = [
+            { id: "02", name: "Forêt la nuit", cat: "Atmosphères extérieures" },
+            { id: "03", name: "Forêt le jour", cat: "Atmosphères extérieures" },
+            { id: "04", name: "Lande désolée", cat: "Atmosphères extérieures" },
+            { id: "05", name: "Marécage / marais", cat: "Atmosphères extérieures" },
+            { id: "06", name: "Bord de falaise", cat: "Atmosphères extérieures" },
+            { id: "07", name: "Pluie légère", cat: "Atmosphères extérieures" },
+            { id: "08", name: "Orage violent", cat: "Atmosphères extérieures" },
+            { id: "09", name: "Nuit d'hiver", cat: "Atmosphères extérieures" },
+            
+            { id: "10", name: "Donjon / crypte", cat: "Atmosphères intérieures" },
+            { id: "11", name: "Cave / souterrain", cat: "Atmosphères intérieures" },
+            { id: "12", name: "Taverne animée", cat: "Atmosphères intérieures" },
+            { id: "13", name: "Taverne calme", cat: "Atmosphères intérieures" },
+            { id: "14", name: "Bibliothèque", cat: "Atmosphères intérieures" },
+            { id: "15", name: "Forge", cat: "Atmosphères intérieures" },
+            { id: "16", name: "Église / cathédrale", cat: "Atmosphères intérieures" },
+            { id: "17", name: "Cachot / cellule", cat: "Atmosphères intérieures" },
+
+            { id: "18", name: "Combat général", cat: "Combat et tension" },
+            { id: "19", name: "Combat rapproché", cat: "Combat et tension" },
+            { id: "20", name: "Armée en marche", cat: "Combat et tension" },
+            { id: "21", name: "Siège / assaut", cat: "Combat et tension" },
+            { id: "22", name: "Suspense / danger", cat: "Combat et tension" },
+            { id: "23", name: "Poursuite / fuite", cat: "Combat et tension" },
+
+            { id: "24", name: "Mort d'un héros", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "25", name: "Victoire", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "26", name: "Cérémonie solennelle", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "27", name: "Magie sombre", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "28", name: "Émerveillement", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "29", name: "Mélancolie / deuil", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "30", name: "Encouragement / bravoure", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "31", name: "Découragement / défaite", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "32", name: "Investigation / mystère", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "33", name: "Village / marché", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "34", name: "Feu de camp", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "35", name: "Voyage en forêt", cat: "Atmosphères émotionnelles / narratives" },
+            { id: "59", name: "Fin de champ de bataille", cat: "Atmosphères émotionnelles / narratives" }
+        ];
+
+        const oneshots = [
+            { id: "36", name: "Porte en bois claquée", cat: "Portes et environnement" },
+            { id: "37", name: "Porte qui grince", cat: "Portes et environnement" },
+            { id: "38", name: "Trappe qui s'ouvre", cat: "Portes et environnement" },
+            { id: "39", name: "Grille de cachot", cat: "Portes et environnement" },
+            { id: "40", name: "Coup d'épée", cat: "Armes et combat" },
+            { id: "41", name: "Lame dégainée", cat: "Armes et combat" },
+            { id: "42", name: "Flèche + impact", cat: "Armes et combat" },
+            { id: "43", name: "Coup de masse / marteau", cat: "Armes et combat" },
+            { id: "44", name: "Bouclier frappé", cat: "Armes et combat" },
+            { id: "45", name: "Coup de poing", cat: "Armes et combat" },
+            { id: "46", name: "Explosion petite", cat: "Destructions" },
+            { id: "47", name: "Explosion grande", cat: "Destructions" },
+            { id: "48", name: "Verre brisé", cat: "Destructions" },
+            { id: "49", name: "Bois fracassé", cat: "Destructions" },
+            { id: "50", name: "Mur s'effondre", cat: "Destructions" },
+            { id: "51", name: "Tonnerre proche", cat: "Nature et ambiance" },
+            { id: "52", name: "Tonnerre lointain", cat: "Nature et ambiance" },
+            { id: "53", name: "Aboiement de chien", cat: "Nature et ambiance" },
+            { id: "54", name: "Cri de corbeau", cat: "Nature et ambiance" },
+            { id: "55", name: "Cheval hennit", cat: "Nature et ambiance" },
+            { id: "56", name: "Loup qui hurle", cat: "Nature et ambiance" },
+            { id: "57", name: "Rat / petite créature", cat: "Nature et ambiance" },
+            { id: "58", name: "Troupe en marche", cat: "Personnages et actions" },
+            { id: "60", name: "Grognement de monstre", cat: "Personnages et actions" },
+            { id: "61", name: "Rire sinistre", cat: "Personnages et actions" },
+            { id: "62", name: "Chuchotement étrange", cat: "Personnages et actions" },
+            { id: "63", name: "Pas sur pierre", cat: "Personnages et actions" },
+            { id: "64", name: "Pas furtifs", cat: "Personnages et actions" },
+            { id: "65", name: "Corps qui tombe", cat: "Personnages et actions" },
+            { id: "66", name: "Chaînes secouées", cat: "Objets" },
+            { id: "67", name: "Cor de chasse", cat: "Objets" },
+            { id: "68", name: "Cloche d'église (1 coup)", cat: "Objets" },
+            { id: "69", name: "Clochette d'alarme", cat: "Objets" },
+            { id: "70", name: "Parchemin déplié", cat: "Objets" },
+            { id: "71", name: "Sac de pièces d'or", cat: "Objets" },
+            { id: "72", name: "Verrou tiré", cat: "Objets" },
+            { id: "73", name: "Livre ouvert / fermé", cat: "Objets" },
+            { id: "74", name: "Sort lancé (lumineux)", cat: "Magie" },
+            { id: "75", name: "Sort lancé (sombre)", cat: "Magie" },
+            { id: "76", name: "Explosion magique", cat: "Magie" },
+            { id: "77", name: "Téléportation", cat: "Magie" },
+            { id: "78", name: "Objet maudit", cat: "Magie" }
+        ];
+
+        let globalVolume = 0.8;
+        const soundStates = {};
+
+        function renderGrid(data, gridId, defaultLoop) {
+            const grid = document.getElementById(gridId);
+            let currentCat = "";
+
+            data.forEach(item => {
+                if (item.cat !== currentCat) {
+                    currentCat = item.cat;
+                    const catDiv = document.createElement('div');
+                    catDiv.className = 'sub-category';
+                    catDiv.innerText = currentCat;
+                    grid.appendChild(catDiv);
+                }
+
+                // Tableau pour stocker les instances actives du même son (Superposition multiple)
+                soundStates[item.id] = {
+                    id: item.id,
+                    name: item.name,
+                    filename: `${item.id}.mp3`,
+                    activeAudios: [], 
+                    isLooping: defaultLoop,
+                    volume: 1.0,
+                    delay: 0,
+                    timer: null
+                };
+
+                const card = document.createElement('div');
+                card.className = 'sound-card';
+                card.id = `card-${item.id}`;
+
+                card.innerHTML = `
+                    <div class="sound-title-block">
+                        <span class="sound-title">${item.name}</span>
+                        <span class="sound-id">#${item.id}</span>
+                    </div>
+                    
+                    <div class="controls-row">
+                        <button class="btn btn-play" onclick="playSound('${item.id}')">▶ Lancer</button>
+                        <button class="btn btn-stop" onclick="stopSound('${item.id}')">■ Stop</button>
+                        <button class="btn btn-loop ${defaultLoop ? 'active' : ''}" id="loop-${item.id}" onclick="toggleLoop('${item.id}')">Boucle</button>
+                    </div>
+
+                    <div class="vol-control">
+                        <span>🔊</span>
+                        <input type="range" min="0" max="1" step="0.05" value="1" oninput="updateSoundVolume('${item.id}', this.value)">
+                    </div>
+
+                    <div class="delay-control">
+                        <label>⏱️ Répéter :</label>
+                        <select id="delay-${item.id}" onchange="updateSoundDelay('${item.id}', this.value)">
+                            <option value="0">Off</option>
+                            <option value="5">5s</option>
+                            <option value="10">10s</option>
+                            <option value="20">20s</option>
+                            <option value="45">45s</option>
+                        </select>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function playSound(id) {
+            const state = soundStates[id];
+            const card = document.getElementById(`card-${id}`);
+
+            // Système de délai actif
+            if (state.timer) {
+                clearTimeout(state.timer);
+                state.timer = null;
+            }
+
+            // Création d'une nouvelle instance autonome (permet la superposition à intervalle très court)
+            const audio = new Audio(state.filename);
+            audio.loop = state.isLooping;
+            audio.volume = state.volume * globalVolume;
+
+            state.activeAudios.push(audio);
+            card.classList.add('playing');
+
+            audio.onended = () => {
+                // Retire l'instance terminée du tableau
+                state.activeAudios = state.activeAudios.filter(a => a !== audio);
+                
+                if (state.activeAudios.length === 0) {
+                    card.classList.remove('playing');
+                }
+
+                // Gère la répétition programmée s'il y a un délai
+                if (!state.isLooping && state.delay > 0) {
+                    state.timer = setTimeout(() => {
+                        playSound(id);
+                    }, state.delay * 1000);
+                }
+            };
+
+            audio.play().catch(e => {
+                console.log(`Fichier introuvable ou erreur : ${state.filename}`);
+            });
+        }
+
+        function stopSound(id) {
+            const state = soundStates[id];
+            const card = document.getElementById(`card-${id}`);
+
+            // Arrête et détruit TOUTES les instances en cours pour ce son
+            state.activeAudios.forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            state.activeAudios = [];
+
+            if (state.timer) {
+                clearTimeout(state.timer);
+                state.timer = null;
+            }
+
+            card.classList.remove('playing');
+        }
+
+        function toggleLoop(id) {
+            const state = soundStates[id];
+            const loopBtn = document.getElementById(`loop-${id}`);
+            state.isLooping = !state.isLooping;
+
+            if (state.isLooping) {
+                loopBtn.classList.add('active');
+                document.getElementById(`delay-${id}`).value = "0";
+                state.delay = 0;
+                if (state.timer) clearTimeout(state.timer);
+            } else {
+                loopBtn.classList.remove('active');
+            }
+
+            // Applique le changement de boucle en temps réel à ce qui joue
+            state.activeAudios.forEach(audio => {
+                audio.loop = state.isLooping;
+            });
+        }
+
+        function updateSoundVolume(id, val) {
+            const state = soundStates[id];
+            state.volume = parseFloat(val);
+            state.activeAudios.forEach(audio => {
+                audio.volume = state.volume * globalVolume;
+            });
+        }
+
+        function updateSoundDelay(id, val) {
+            const state = soundStates[id];
+            state.delay = parseInt(val);
+
+            if (state.delay > 0) {
+                state.isLooping = false;
+                document.getElementById(`loop-${id}`).classList.remove('active');
+            } else {
+                if (state.timer) {
+                    clearTimeout(state.timer);
+                    state.timer = null;
+                }
+            }
+        }
+
+        function stopAllSounds() {
+            Object.keys(soundStates).forEach(id => {
+                stopSound(id);
+            });
+        }
+
+        function updateGlobalVolume(val) {
+            globalVolume = parseFloat(val);
+            Object.keys(soundStates).forEach(id => {
+                const state = soundStates[id];
+                state.activeAudios.forEach(audio => {
+                    audio.volume = state.volume * globalVolume;
+                });
+            });
+        }
+
+        renderGrid(ambients, 'ambient-grid', true);
+        renderGrid(oneshots, 'oneshot-grid', false);
+    </script>
+</body>
+</html>
