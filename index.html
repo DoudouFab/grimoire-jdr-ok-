@@ -125,10 +125,9 @@
         .sound-grid-container::-webkit-scrollbar { width: 4px; }
         .sound-grid-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
-        /* Grille de petites tuiles compactes */
         .tiles-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
             gap: 8px;
             margin-bottom: 15px;
         }
@@ -143,8 +142,7 @@
             flex-direction: column;
             justify-content: space-between;
             transition: all 0.2s;
-            position: relative;
-            min-height: 50px;
+            min-height: 45px;
         }
 
         .sound-tile:hover {
@@ -171,7 +169,7 @@
         }
 
         .sound-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-title);
             line-height: 1.2;
@@ -186,25 +184,18 @@
             border-radius: 4px;
         }
 
-        /* Panneau de contrôle dépliable en bas ou tiroir */
         .control-drawer {
             display: none;
             background: #0b0e14;
             border: 1px solid var(--gold);
             border-radius: 12px;
             padding: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            animation: fadeIn 0.2s ease-in-out;
         }
 
         .control-drawer.open {
             display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .drawer-header {
@@ -219,7 +210,7 @@
         .drawer-title {
             color: var(--gold-bright);
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         .controls-row {
@@ -231,400 +222,3 @@
         .btn {
             font-family: inherit;
             border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
-            transition: all 0.15s;
-            text-align: center;
-        }
-
-        .btn-play {
-            background: #143322;
-            color: var(--accent-play);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            flex: 2;
-        }
-        .btn-play:hover { background: var(--accent-play); color: white; }
-
-        .btn-stop {
-            background: #331414;
-            color: var(--accent-stop);
-            border: 1px solid rgba(231, 76, 60, 0.3);
-            flex: 1;
-        }
-        .btn-stop:hover { background: var(--accent-stop); color: white; }
-
-        .btn-loop {
-            background: #1e293b;
-            color: #64748b;
-            border: 1px solid #334155;
-            flex: 1.2;
-        }
-        .btn-loop.active {
-            background: #0f3443;
-            color: #38bdf8;
-            border-color: #38bdf8;
-        }
-
-        .extra-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.75rem;
-            color: #64748b;
-            gap: 15px;
-        }
-
-        .vol-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .vol-control input[type="range"] {
-            flex: 1;
-            accent-color: var(--gold);
-            height: 4px;
-            background: #131822;
-            cursor: pointer;
-        }
-
-        .delay-control select {
-            background: #131822;
-            color: var(--text-color);
-            border: 1px solid #27354a;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            padding: 4px;
-            cursor: pointer;
-        }
-
-        .sub-category {
-            grid-column: 1 / -1;
-            font-size: 0.75rem;
-            color: var(--gold);
-            margin-top: 15px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            font-weight: bold;
-            border-left: 2px solid var(--gold);
-            padding-left: 6px;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>📜 Grimoire Audio JDR</h1>
-    </header>
-
-    <div class="master-bar">
-        <button class="btn-master-stop" onclick="stopAllSounds()">🛑 SILENCE ABSOLU</button>
-        <div class="global-vol">
-            <span>🔊 VOLUME GÉNÉRAL</span>
-            <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.8" oninput="updateGlobalVolume(this.value)">
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- Panel Ambiances -->
-        <div class="panel">
-            <h2>🎵 Ambiances Continues</h2>
-            <div class="sound-grid-container">
-                <div id="drawer-ambient" class="control-drawer"></div>
-                <div id="ambient-tiles" class="tiles-container"></div>
-            </div>
-        </div>
-
-        <!-- Panel Effets -->
-        <div class="panel">
-            <h2>💥 Effets & Déclencheurs</h2>
-            <div class="sound-grid-container">
-                <div id="drawer-oneshot" class="control-drawer"></div>
-                <div id="oneshot-tiles" class="tiles-container"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const ambients = [
-            { id: "02", name: "Forêt la nuit", cat: "Extérieurs" },
-            { id: "03", name: "Forêt le jour", cat: "Extérieurs" },
-            { id: "04", name: "Lande désolée", cat: "Extérieurs" },
-            { id: "05", name: "Marécage / marais", cat: "Extérieurs" },
-            { id: "06", name: "Bord de falaise", cat: "Extérieurs" },
-            { id: "07", name: "Pluie légère", cat: "Extérieurs" },
-            { id: "08", name: "Orage violent", cat: "Extérieurs" },
-            { id: "09", name: "Nuit d'hiver", cat: "Extérieurs" },
-            
-            { id: "10", name: "Donjon / crypte", cat: "Intérieurs" },
-            { id: "11", name: "Cave / souterrain", cat: "Intérieurs" },
-            { id: "12", name: "Taverne animée", cat: "Intérieurs" },
-            { id: "13", name: "Taverne calme", cat: "Intérieurs" },
-            { id: "14", name: "Bibliothèque", cat: "Intérieurs" },
-            { id: "15", name: "Forge", cat: "Intérieurs" },
-            { id: "16", name: "Église / cathédrale", cat: "Intérieurs" },
-            { id: "17", name: "Cachot / cellule", cat: "Intérieurs" },
-
-            { id: "18", name: "Combat général", cat: "Combat & Tension" },
-            { id: "19", name: "Combat rapproché", cat: "Combat & Tension" },
-            { id: "20", name: "Armée en marche", cat: "Combat & Tension" },
-            { id: "21", name: "Siège / assaut", cat: "Combat & Tension" },
-            { id: "22", name: "Suspense / danger", cat: "Combat & Tension" },
-            { id: "23", name: "Poursuite / fuite", cat: "Combat & Tension" },
-
-            { id: "24", name: "Mort d'un héros", cat: "Narratif & Émotions" },
-            { id: "25", name: "Victoire", cat: "Narratif & Émotions" },
-            { id: "26", name: "Cérémonie solennelle", cat: "Narratif & Émotions" },
-            { id: "27", name: "Magie sombre", cat: "Narratif & Émotions" },
-            { id: "28", name: "Émerveillement", cat: "Narratif & Émotions" },
-            { id: "29", name: "Mélancolie / deuil", cat: "Narratif & Émotions" },
-            { id: "30", name: "Encouragement / bravoure", cat: "Narratif & Émotions" },
-            { id: "31", name: "Découragement / défaite", cat: "Narratif & Émotions" },
-            { id: "32", name: "Investigation / mystère", cat: "Narratif & Émotions" },
-            { id: "33", name: "Village / marché", cat: "Narratif & Émotions" },
-            { id: "34", name: "Feu de camp", cat: "Narratif & Émotions" },
-            { id: "35", name: "Voyage en forêt", cat: "Narratif & Émotions" },
-            { id: "59", name: "Fin de champ de bataille", cat: "Narratif & Émotions" }
-        ];
-
-        const oneshots = [
-            { id: "36", name: "Porte en bois claquée", cat: "Environnement" },
-            { id: "37", name: "Porte qui grince", cat: "Environnement" },
-            { id: "38", name: "Trappe qui s'ouvre", cat: "Environnement" },
-            { id: "39", name: "Grille de cachot", cat: "Environnement" },
-            { id: "40", name: "Coup d'épée", cat: "Armes & Combat" },
-            { id: "41", name: "Lame dégainée", cat: "Armes & Combat" },
-            { id: "42", name: "Flèche + impact", cat: "Armes & Combat" },
-            { id: "43", name: "Coup de masse / marteau", cat: "Armes & Combat" },
-            { id: "44", name: "Bouclier frappé", cat: "Armes & Combat" },
-            { id: "45", name: "Coup de poing", cat: "Armes & Combat" },
-            { id: "46", name: "Explosion petite", cat: "Destructions" },
-            { id: "47", name: "Explosion grande", cat: "Destructions" },
-            { id: "48", name: "Verre brisé", cat: "Destructions" },
-            { id: "49", name: "Bois fracassé", cat: "Destructions" },
-            { id: "50", name: "Mur s'effondre", cat: "Destructions" },
-            { id: "51", name: "Tonnerre proche", cat: "Nature" },
-            { id: "52", name: "Tonnerre lointain", cat: "Nature" },
-            { id: "53", name: "Aboiement de chien", cat: "Nature" },
-            { id: "54", name: "Cri de corbeau", cat: "Nature" },
-            { id: "55", name: "Cheval hennit", cat: "Nature" },
-            { id: "56", name: "Loup qui hurle", cat: "Nature" },
-            { id: "57", name: "Rat / petite créature", cat: "Nature" },
-            { id: "58", name: "Troupe en marche", cat: "Actions" },
-            { id: "60", name: "Grognement de monstre", cat: "Actions" },
-            { id: "61", name: "Rire sinistre", cat: "Actions" },
-            { id: "62", name: "Chuchotement étrange", cat: "Actions" },
-            { id: "63", name: "Pas sur pierre", cat: "Actions" },
-            { id: "64", name: "Pas furtifs", cat: "Actions" },
-            { id: "65", name: "Corps qui tombe", cat: "Actions" },
-            { id: "66", name: "Chaînes secouées", cat: "Objets" },
-            { id: "67", name: "Cor de chasse", cat: "Objets" },
-            { id: "68", name: "Cloche d'église (1 coup)", cat: "Objets" },
-            { id: "69", name: "Clochette d'alarme", cat: "Objets" },
-            { id: "70", name: "Parchemin déplié", cat: "Objets" },
-            { id: "71", name: "Sac de pièces d'or", cat: "Objets" },
-            { id: "72", name: "Verrou tiré", cat: "Objets" },
-            { id: "73", name: "Livre ouvert / fermé", cat: "Objets" },
-            { id: "74", name: "Sort lancé (lumineux)", cat: "Magie" },
-            { id: "75", name: "Sort lancé (sombre)", cat: "Magie" },
-            { id: "76", name: "Explosion magique", cat: "Magie" },
-            { id: "77", name: "Téléportation", cat: "Magie" },
-            { id: "78", name: "Objet maudit", cat: "Magie" }
-        ];
-
-        let globalVolume = 0.8;
-        const soundStates = {};
-
-        function renderTiles(data, containerId, drawerId, defaultLoop) {
-            const container = document.getElementById(containerId);
-            const drawer = document.getElementById(drawerId);
-            let currentCat = "";
-            let currentGrid = container;
-
-            data.forEach(item => {
-                if (item.cat !== currentCat) {
-                    currentCat = item.cat;
-                    const catDiv = document.createElement('div');
-                    catDiv.className = 'sub-category';
-                    catDiv.innerText = currentCat;
-                    container.appendChild(catDiv);
-
-                    // Sous-grille pour les tuiles de cette catégorie
-                    currentGrid = document.createElement('div');
-                    currentGrid.className = 'tiles-container';
-                    container.appendChild(currentGrid);
-                }
-
-                soundStates[item.id] = {
-                    id: item.id,
-                    name: item.name,
-                    filename: `${item.id}.mp3`,
-                    activeAudios: [], 
-                    isLooping: defaultLoop,
-                    volume: 1.0,
-                    delay: 0,
-                    timer: null
-                };
-
-                const tile = document.createElement('div');
-                tile.className = 'sound-tile';
-                tile.id = `tile-${item.id}`;
-                tile.onclick = () => openDrawer(item.id, containerId, drawerId);
-
-                tile.innerHTML = `
-                    <div class="tile-header" style="width:100%;">
-                        <span class="sound-title">${item.name}</span>
-                        <span class="sound-id">#${item.id}</span>
-                    </div>
-                `;
-                currentGrid.appendChild(tile);
-            });
-        }
-
-        function openDrawer(id, containerId, drawerId) {
-            const item = [...ambients, ...oneshots].find(s => s.id === id);
-            const state = soundStates[id];
-            const drawer = document.getElementById(drawerId);
-
-            // Retirer la classe active de toutes les tuiles de ce panneau
-            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
-            document.getElementById(`tile-${id}`).classList.add('active-panel');
-
-            drawer.className = "control-drawer open";
-            drawer.innerHTML = `
-                <div class="drawer-header">
-                    <span class="drawer-title">🎛️ Contrôles : ${item.name} (#${item.id})</span>
-                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}', '${containerId}')">✕ Fermer</button>
-                </div>
-                <div class="controls-row">
-                    <button class="btn btn-play" onclick="playSound('${id}')">▶ Lancer</button>
-                    <button class="btn btn-stop" onclick="stopSound('${id}')">■ Stop</button>
-                    <button class="btn btn-loop ${state.isLooping ? 'active' : ''}" id="loop-${id}" onclick="toggleLoop('${id}')">Boucle</button>
-                </div>
-                <div class="extra-controls">
-                    <div class="vol-control">
-                        <span>🔊 Vol:</span>
-                        <input type="range" min="0" max="1" step="0.05" value="${state.volume}" oninput="updateSoundVolume('${id}', this.value)">
-                    </div>
-                    <div class="delay-control">
-                        <select id="delay-${id}" onchange="updateSoundDelay('${id}', this.value)">
-                            <option value="0" ${state.delay === 0 ? 'selected' : ''}>⏱️ Répétition : Off</option>
-                            <option value="5" ${state.delay === 5 ? 'selected' : ''}>⏱️ 5s</option>
-                            <option value="10" ${state.delay === 10 ? 'selected' : ''}>⏱️ 10s</option>
-                            <option value="20" ${state.delay === 20 ? 'selected' : ''}>⏱️ 20s</option>
-                            <option value="45" ${state.delay === 45 ? 'selected' : ''}>⏱️ 45s</option>
-                        </select>
-                    </div>
-                </div>
-            `;
-        }
-
-        function closeDrawer(drawerId, containerId) {
-            document.getElementById(drawerId).className = "control-drawer";
-            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
-        }
-
-        function playSound(id) {
-            const state = soundStates[id];
-            const tile = document.getElementById(`tile-${id}`);
-
-            if (state.timer) {
-                clearTimeout(state.timer);
-                state.timer = null;
-            }
-
-            const audio = new Audio(state.filename);
-            audio.loop = state.isLooping;
-            audio.volume = state.volume * globalVolume;
-
-            state.activeAudios.push(audio);
-            tile.classList.add('playing');
-
-            audio.onended = () => {
-                state.activeAudios = state.activeAudios.filter(a => a !== audio);
-                if (state.activeAudios.length === 0) tile.classList.remove('playing');
-
-                if (!state.isLooping && state.delay > 0) {
-                    state.timer = setTimeout(() => playSound(id), state.delay * 1000);
-                }
-            };
-
-            audio.play().catch(e => console.log(`Erreur audio : ${state.filename}`));
-        }
-
-        function stopSound(id) {
-            const state = soundStates[id];
-            const tile = document.getElementById(`tile-${id}`);
-
-            state.activeAudios.forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
-            });
-            state.activeAudios = [];
-
-            if (state.timer) {
-                clearTimeout(state.timer);
-                state.timer = null;
-            }
-            tile.classList.remove('playing');
-        }
-
-        function toggleLoop(id) {
-            const state = soundStates[id];
-            const loopBtn = document.getElementById(`loop-${id}`);
-            state.isLooping = !state.isLooping;
-
-            if (state.isLooping) {
-                if(loopBtn) loopBtn.classList.add('active');
-                document.getElementById(`delay-${id}`).value = "0";
-                state.delay = 0;
-                if (state.timer) clearTimeout(state.timer);
-            } else {
-                if(loopBtn) loopBtn.classList.remove('active');
-            }
-
-            state.activeAudios.forEach(audio => audio.loop = state.isLooping);
-        }
-
-        function updateSoundVolume(id, val) {
-            const state = soundStates[id];
-            state.volume = parseFloat(val);
-            state.activeAudios.forEach(audio => audio.volume = state.volume * globalVolume);
-        }
-
-        function updateSoundDelay(id, val) {
-            const state = soundStates[id];
-            state.delay = parseInt(val);
-            if (state.delay > 0) {
-                state.isLooping = false;
-                const loopBtn = document.getElementById(`loop-${id}`);
-                if(loopBtn) loopBtn.classList.remove('active');
-            } else if (state.timer) {
-                clearTimeout(state.timer);
-                state.timer = null;
-            }
-        }
-
-        function stopAllSounds() {
-            Object.keys(soundStates).forEach(id => stopSound(id));
-        }
-
-        function updateGlobalVolume(val) {
-            globalVolume = parseFloat(val);
-            Object.keys(soundStates).forEach(id => {
-                soundStates[id].activeAudios.forEach(audio => {
-                    audio.volume = soundStates[id].volume * globalVolume;
-                });
-            });
-        }
-
-        renderTiles(ambients, 'ambient-grid-container', 'drawer-ambient', true);
-        renderTiles(oneshots, 'oneshot-grid-container', 'drawer-oneshot', false);
-    </script>
-</body>
-</html>
