@@ -30,7 +30,6 @@
             flex-direction: column;
         }
 
-        /* En-tête compact avec titre en haut à droite */
         header {
             display: flex;
             justify-content: flex-end;
@@ -48,7 +47,6 @@
             text-transform: uppercase;
         }
 
-        /* Barre principale fixe en haut */
         .master-bar {
             display: flex;
             flex-wrap: wrap;
@@ -200,6 +198,53 @@
             cursor: pointer;
         }
 
+        /* Panneau des sons en cours */
+        .active-sounds-panel {
+            background: #0d121b;
+            border: 1px solid rgba(46, 204, 113, 0.4);
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
+
+        .active-sounds-title {
+            font-size: 0.8rem;
+            color: var(--accent-play);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .active-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .active-tag {
+            background: rgba(46, 204, 113, 0.15);
+            border: 1px solid var(--accent-play);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.72rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .active-tag button {
+            background: none;
+            border: none;
+            color: var(--accent-stop);
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
         /* Organisation principale en 2 tableaux */
         .container {
             display: grid;
@@ -222,7 +267,7 @@
             border: 1px solid #222d40;
             display: flex;
             flex-direction: column;
-            max-height: 75vh;
+            max-height: 70vh;
         }
 
         h2 { 
@@ -235,7 +280,6 @@
             padding-bottom: 5px;
         }
 
-        /* Seule la zone des tuiles défile */
         .sound-grid-container {
             overflow-y: auto;
             padding-right: 4px;
@@ -245,17 +289,16 @@
         .sound-grid-container::-webkit-scrollbar { width: 4px; }
         .sound-grid-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
-        /* Grille adaptative : 4-5 en PC, 3 en GSM */
         .tiles-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 par défaut (GSM) */
+            grid-template-columns: repeat(3, 1fr);
             gap: 6px;
             margin-bottom: 10px;
         }
 
         @media (min-width: 768px) {
             .tiles-container {
-                grid-template-columns: repeat(5, 1fr); /* 5 en mode PC */
+                grid-template-columns: repeat(5, 1fr);
             }
         }
 
@@ -324,6 +367,14 @@
         <div class="global-vol">
             <span>🔊 VOLUME</span>
             <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.8" oninput="updateGlobalVolume(this.value)">
+        </div>
+    </div>
+
+    <!-- Fenêtre des sons en cours -->
+    <div class="active-sounds-panel">
+        <div class="active-sounds-title">🟢 Sons en cours de lecture :</div>
+        <div class="active-list" id="active-sounds-list">
+            <span style="font-size: 0.75rem; color: #64748b;">Aucun son actif</span>
         </div>
     </div>
 
@@ -482,14 +533,14 @@
             const state = soundStates[id];
             const drawer = document.getElementById(drawerId);
 
-            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
+            document.querySelectorAll(`.sound-tile`).forEach(t => t.classList.remove('active-panel'));
             document.getElementById(`tile-${id}`).classList.add('active-panel');
 
             drawer.className = "control-drawer open";
             drawer.innerHTML = `
                 <div class="drawer-header">
                     <span class="drawer-title">🎛️ Contrôles : ${item.name} (#${item.id})</span>
-                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}', '${containerId}')">✕</button>
+                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}')">✕</button>
                 </div>
                 <div class="controls-row">
                     <button class="btn btn-play" onclick="playSound('${id}')">▶ Lancer</button>
@@ -514,9 +565,31 @@
             `;
         }
 
-        function closeDrawer(drawerId, containerId) {
+        function closeDrawer(drawerId) {
             document.getElementById(drawerId).className = "control-drawer";
-            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
+            document.querySelectorAll('.sound-tile').forEach(t => t.classList.remove('active-panel'));
+        }
+
+        function updateActiveSoundsDisplay() {
+            const listContainer = document.getElementById('active-sounds-list');
+            let activeItems = [];
+
+            Object.keys(soundStates).forEach(id => {
+                if (soundStates[id].activeAudios.length > 0) {
+                    activeItems.push(`
+                        <div class="active-tag">
+                            <span>🎵 ${soundStates[id].name}</span>
+                            <button onclick="stopSound('${id}')">✕</button>
+                        </div>
+                    `);
+                }
+            });
+
+            if (activeItems.length > 0) {
+                listContainer.innerHTML = activeItems.join('');
+            } else {
+                listContainer.innerHTML = `<span style="font-size: 0.75rem; color: #64748b;">Aucun son actif</span>`;
+            }
         }
 
         function playSound(id) {
@@ -534,10 +607,12 @@
 
             state.activeAudios.push(audio);
             tile.classList.add('playing');
+            updateActiveSoundsDisplay();
 
             audio.onended = () => {
                 state.activeAudios = state.activeAudios.filter(a => a !== audio);
                 if (state.activeAudios.length === 0) tile.classList.remove('playing');
+                updateActiveSoundsDisplay();
 
                 if (!state.isLooping && state.delay > 0) {
                     state.timer = setTimeout(() => playSound(id), state.delay * 1000);
@@ -561,7 +636,8 @@
                 clearTimeout(state.timer);
                 state.timer = null;
             }
-            tile.classList.remove('playing');
+            if (tile) tile.classList.remove('playing');
+            updateActiveSoundsDisplay();
         }
 
         function toggleLoop(id) {
