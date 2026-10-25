@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grimoire Audio JDR</title>
+    <title>Grimoire Audio JDR - Mode Tuiles</title>
     <style>
         :root {
             --bg-color: #0b0e14;
@@ -89,11 +89,11 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        @media (min-width: 900px) {
+        @media (min-width: 1000px) {
             .container { grid-template-columns: 1fr 1fr; }
         }
 
@@ -116,80 +116,128 @@
             padding-bottom: 6px;
         }
 
-        .sound-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 65vh;
+        .sound-grid-container {
+            max-height: 70vh;
             overflow-y: auto;
             padding-right: 5px;
         }
 
-        .sound-grid::-webkit-scrollbar { width: 4px; }
-        .sound-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+        .sound-grid-container::-webkit-scrollbar { width: 4px; }
+        .sound-grid-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
 
-        .sound-card {
-            background: var(--card-bg);
-            border: 1px solid #27354a;
-            border-radius: 12px;
-            padding: 12px 15px;
-            display: flex;
-            flex-direction: column;
+        /* Grille de petites tuiles compactes */
+        .tiles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 8px;
-            transition: all 0.2s;
+            margin-bottom: 15px;
         }
 
-        .sound-card:hover {
+        .sound-tile {
+            background: var(--card-bg);
+            border: 1px solid #27354a;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+            position: relative;
+            min-height: 50px;
+        }
+
+        .sound-tile:hover {
             background-color: var(--card-hover);
             border-color: var(--gold);
         }
 
-        .sound-card.playing {
+        .sound-tile.playing {
             border-color: var(--accent-play);
-            background: rgba(46, 204, 113, 0.08);
-            box-shadow: 0 0 12px rgba(46, 204, 113, 0.15);
+            background: rgba(46, 204, 113, 0.12);
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
         }
 
-        .sound-info {
+        .sound-tile.active-panel {
+            border-color: var(--gold);
+            background: var(--card-hover);
+        }
+
+        .tile-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            gap: 5px;
         }
 
         .sound-title {
-            font-size: 1rem;
+            font-size: 0.85rem;
             font-weight: 600;
             color: var(--text-title);
-        }
-
-        .sound-card.playing .sound-title {
-            color: var(--gold-bright);
+            line-height: 1.2;
         }
 
         .sound-id {
             font-family: monospace;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--gold);
             background: rgba(212, 175, 55, 0.1);
-            padding: 2px 6px;
-            border-radius: 6px;
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+
+        /* Panneau de contrôle dépliable en bas ou tiroir */
+        .control-drawer {
+            display: none;
+            background: #0b0e14;
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .control-drawer.open {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 6px;
+        }
+
+        .drawer-title {
+            color: var(--gold-bright);
+            font-weight: bold;
+            font-size: 0.95rem;
         }
 
         .controls-row {
             display: flex;
             gap: 8px;
-            align-items: center;
+            margin-bottom: 10px;
         }
 
         .btn {
             font-family: inherit;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 0.75rem;
             font-weight: bold;
             transition: all 0.15s;
+            text-align: center;
         }
 
         .btn-play {
@@ -213,7 +261,6 @@
             color: #64748b;
             border: 1px solid #334155;
             flex: 1.2;
-            font-size: 0.7rem;
         }
         .btn-loop.active {
             background: #0f3443;
@@ -227,41 +274,42 @@
             align-items: center;
             font-size: 0.75rem;
             color: #64748b;
-            gap: 10px;
+            gap: 15px;
         }
 
         .vol-control {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             flex: 1;
         }
 
         .vol-control input[type="range"] {
             flex: 1;
             accent-color: var(--gold);
-            height: 3px;
-            background: #0b0e14;
+            height: 4px;
+            background: #131822;
             cursor: pointer;
         }
 
         .delay-control select {
-            background: #0b0e14;
+            background: #131822;
             color: var(--text-color);
             border: 1px solid #27354a;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             border-radius: 6px;
-            padding: 3px;
+            padding: 4px;
             cursor: pointer;
         }
 
         .sub-category {
+            grid-column: 1 / -1;
             font-size: 0.75rem;
             color: var(--gold);
-            margin-top: 10px;
-            margin-bottom: 4px;
+            margin-top: 15px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             font-weight: bold;
             border-left: 2px solid var(--gold);
             padding-left: 6px;
@@ -283,14 +331,22 @@
     </div>
 
     <div class="container">
+        <!-- Panel Ambiances -->
         <div class="panel">
             <h2>🎵 Ambiances Continues</h2>
-            <div class="sound-grid" id="ambient-grid"></div>
+            <div class="sound-grid-container">
+                <div id="drawer-ambient" class="control-drawer"></div>
+                <div id="ambient-tiles" class="tiles-container"></div>
+            </div>
         </div>
 
+        <!-- Panel Effets -->
         <div class="panel">
             <h2>💥 Effets & Déclencheurs</h2>
-            <div class="sound-grid" id="oneshot-grid"></div>
+            <div class="sound-grid-container">
+                <div id="drawer-oneshot" class="control-drawer"></div>
+                <div id="oneshot-tiles" class="tiles-container"></div>
+            </div>
         </div>
     </div>
 
@@ -384,9 +440,11 @@
         let globalVolume = 0.8;
         const soundStates = {};
 
-        function renderGrid(data, gridId, defaultLoop) {
-            const grid = document.getElementById(gridId);
+        function renderTiles(data, containerId, drawerId, defaultLoop) {
+            const container = document.getElementById(containerId);
+            const drawer = document.getElementById(drawerId);
             let currentCat = "";
+            let currentGrid = container;
 
             data.forEach(item => {
                 if (item.cat !== currentCat) {
@@ -394,7 +452,12 @@
                     const catDiv = document.createElement('div');
                     catDiv.className = 'sub-category';
                     catDiv.innerText = currentCat;
-                    grid.appendChild(catDiv);
+                    container.appendChild(catDiv);
+
+                    // Sous-grille pour les tuiles de cette catégorie
+                    currentGrid = document.createElement('div');
+                    currentGrid.className = 'tiles-container';
+                    container.appendChild(currentGrid);
                 }
 
                 soundStates[item.id] = {
@@ -408,45 +471,67 @@
                     timer: null
                 };
 
-                const card = document.createElement('div');
-                card.className = 'sound-card';
-                card.id = `card-${item.id}`;
+                const tile = document.createElement('div');
+                tile.className = 'sound-tile';
+                tile.id = `tile-${item.id}`;
+                tile.onclick = () => openDrawer(item.id, containerId, drawerId);
 
-                card.innerHTML = `
-                    <div class="sound-info">
+                tile.innerHTML = `
+                    <div class="tile-header" style="width:100%;">
                         <span class="sound-title">${item.name}</span>
                         <span class="sound-id">#${item.id}</span>
                     </div>
-                    
-                    <div class="controls-row">
-                        <button class="btn btn-play" onclick="playSound('${item.id}')">▶ Lancer</button>
-                        <button class="btn btn-stop" onclick="stopSound('${item.id}')">■ Stop</button>
-                        <button class="btn btn-loop ${defaultLoop ? 'active' : ''}" id="loop-${item.id}" onclick="toggleLoop('${item.id}')">Boucle</button>
-                    </div>
-
-                    <div class="extra-controls">
-                        <div class="vol-control">
-                            <span>🔊</span>
-                            <input type="range" min="0" max="1" step="0.05" value="1" oninput="updateSoundVolume('${item.id}', this.value)">
-                        </div>
-                        <div class="delay-control">
-                            <select id="delay-${item.id}" onchange="updateSoundDelay('${item.id}', this.value)">
-                                <option value="0">⏱️ Répétition : Off</option>
-                                <option value="5">⏱️ 5s</option>
-                                <option value="10">⏱️ 10s</option>
-                                <option value="20">⏱️ 20s</option>
-                                <option value="45">⏱️ 45s</option>
-                            </select>
-                        </div>
-                    </div>
                 `;
-                grid.appendChild(card);
+                currentGrid.appendChild(tile);
             });
+        }
+
+        function openDrawer(id, containerId, drawerId) {
+            const item = [...ambients, ...oneshots].find(s => s.id === id);
+            const state = soundStates[id];
+            const drawer = document.getElementById(drawerId);
+
+            // Retirer la classe active de toutes les tuiles de ce panneau
+            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
+            document.getElementById(`tile-${id}`).classList.add('active-panel');
+
+            drawer.className = "control-drawer open";
+            drawer.innerHTML = `
+                <div class="drawer-header">
+                    <span class="drawer-title">🎛️ Contrôles : ${item.name} (#${item.id})</span>
+                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}', '${containerId}')">✕ Fermer</button>
+                </div>
+                <div class="controls-row">
+                    <button class="btn btn-play" onclick="playSound('${id}')">▶ Lancer</button>
+                    <button class="btn btn-stop" onclick="stopSound('${id}')">■ Stop</button>
+                    <button class="btn btn-loop ${state.isLooping ? 'active' : ''}" id="loop-${id}" onclick="toggleLoop('${id}')">Boucle</button>
+                </div>
+                <div class="extra-controls">
+                    <div class="vol-control">
+                        <span>🔊 Vol:</span>
+                        <input type="range" min="0" max="1" step="0.05" value="${state.volume}" oninput="updateSoundVolume('${id}', this.value)">
+                    </div>
+                    <div class="delay-control">
+                        <select id="delay-${id}" onchange="updateSoundDelay('${id}', this.value)">
+                            <option value="0" ${state.delay === 0 ? 'selected' : ''}>⏱️ Répétition : Off</option>
+                            <option value="5" ${state.delay === 5 ? 'selected' : ''}>⏱️ 5s</option>
+                            <option value="10" ${state.delay === 10 ? 'selected' : ''}>⏱️ 10s</option>
+                            <option value="20" ${state.delay === 20 ? 'selected' : ''}>⏱️ 20s</option>
+                            <option value="45" ${state.delay === 45 ? 'selected' : ''}>⏱️ 45s</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        function closeDrawer(drawerId, containerId) {
+            document.getElementById(drawerId).className = "control-drawer";
+            document.querySelectorAll(`#${containerId} .sound-tile`).forEach(t => t.classList.remove('active-panel'));
         }
 
         function playSound(id) {
             const state = soundStates[id];
-            const card = document.getElementById(`card-${id}`);
+            const tile = document.getElementById(`tile-${id}`);
 
             if (state.timer) {
                 clearTimeout(state.timer);
@@ -458,11 +543,11 @@
             audio.volume = state.volume * globalVolume;
 
             state.activeAudios.push(audio);
-            card.classList.add('playing');
+            tile.classList.add('playing');
 
             audio.onended = () => {
                 state.activeAudios = state.activeAudios.filter(a => a !== audio);
-                if (state.activeAudios.length === 0) card.classList.remove('playing');
+                if (state.activeAudios.length === 0) tile.classList.remove('playing');
 
                 if (!state.isLooping && state.delay > 0) {
                     state.timer = setTimeout(() => playSound(id), state.delay * 1000);
@@ -474,7 +559,7 @@
 
         function stopSound(id) {
             const state = soundStates[id];
-            const card = document.getElementById(`card-${id}`);
+            const tile = document.getElementById(`tile-${id}`);
 
             state.activeAudios.forEach(audio => {
                 audio.pause();
@@ -486,7 +571,7 @@
                 clearTimeout(state.timer);
                 state.timer = null;
             }
-            card.classList.remove('playing');
+            tile.classList.remove('playing');
         }
 
         function toggleLoop(id) {
@@ -495,12 +580,12 @@
             state.isLooping = !state.isLooping;
 
             if (state.isLooping) {
-                loopBtn.classList.add('active');
+                if(loopBtn) loopBtn.classList.add('active');
                 document.getElementById(`delay-${id}`).value = "0";
                 state.delay = 0;
                 if (state.timer) clearTimeout(state.timer);
             } else {
-                loopBtn.classList.remove('active');
+                if(loopBtn) loopBtn.classList.remove('active');
             }
 
             state.activeAudios.forEach(audio => audio.loop = state.isLooping);
@@ -517,7 +602,8 @@
             state.delay = parseInt(val);
             if (state.delay > 0) {
                 state.isLooping = false;
-                document.getElementById(`loop-${id}`).classList.remove('active');
+                const loopBtn = document.getElementById(`loop-${id}`);
+                if(loopBtn) loopBtn.classList.remove('active');
             } else if (state.timer) {
                 clearTimeout(state.timer);
                 state.timer = null;
@@ -537,8 +623,8 @@
             });
         }
 
-        renderGrid(ambients, 'ambient-grid', true);
-        renderGrid(oneshots, 'oneshot-grid', false);
+        renderTiles(ambients, 'ambient-grid-container', 'drawer-ambient', true);
+        renderTiles(oneshots, 'oneshot-grid-container', 'drawer-oneshot', false);
     </script>
 </body>
 </html>
