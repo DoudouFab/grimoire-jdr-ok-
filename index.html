@@ -6,49 +6,52 @@
     <title>Grimoire Audio JDR Pro</title>
     <style>
         :root {
-            --bg-color: #0b0d10;
-            --panel-bg: #12161f;
-            --card-bg: #171d27;
-            --card-hover: #1e2633;
-            --gold: #cfa830;
-            --gold-bright: #f6e4a0;
-            --accent-play: #219653;
+            --bg-color: #07090c;
+            --panel-bg: #0f131a;
+            --card-bg: #141a23;
+            --card-hover: #1b2330;
+            --gold: #d4af37;
+            --gold-bright: #f3e5ab;
+            --accent-play: #27ae60;
             --accent-stop: #c0392b;
-            --text-color: #cbd5e1;
-            --text-title: #ffffff;
+            --text-color: #94a3b8;
+            --text-title: #f8fafc;
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            background-image: radial-gradient(circle at center, #171f2c 0%, #0b0d10 100%);
+            background-image: radial-gradient(circle at center, #111827 0%, #07090c 100%);
+            min-height: 100vh;
         }
 
         header {
             text-align: center;
             margin-bottom: 25px;
-            border-bottom: 1px dashed var(--gold);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
             padding-bottom: 15px;
         }
 
         h1 { 
             margin: 0; 
-            font-size: 2.2rem; 
+            font-size: 2rem; 
             color: var(--gold); 
-            letter-spacing: 3px;
-            font-weight: normal;
+            letter-spacing: 2px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         h2 { 
             font-family: 'Segoe UI', sans-serif;
-            border-bottom: 2px solid var(--gold); 
+            border-bottom: 1px solid rgba(212, 175, 55, 0.4); 
             padding-bottom: 8px; 
             margin-top: 0; 
-            font-size: 1.3rem; 
-            color: #fff;
+            font-size: 1.2rem; 
+            color: var(--text-title);
+            letter-spacing: 1px;
         }
 
         .container {
@@ -65,10 +68,10 @@
 
         .panel {
             background-color: var(--panel-bg);
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-            border: 1px solid #1f2735;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            border: 1px solid #1e293b;
         }
 
         .master-controls {
@@ -77,61 +80,61 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            background: #07090d;
+            background: #0b0f17;
             padding: 15px 25px;
-            border-radius: 10px;
+            border-radius: 12px;
             gap: 20px;
-            border: 1px solid var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .sound-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 12px;
-            max-height: 75vh;
+            max-height: 70vh;
             overflow-y: auto;
             padding-right: 8px;
         }
 
         .sound-grid::-webkit-scrollbar { width: 6px; }
-        .sound-grid::-webkit-scrollbar-thumb { background: #2c3e50; border-radius: 4px; }
+        .sound-grid::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 
         .sound-card {
             background: var(--card-bg);
-            border: 1px solid #232c3d;
-            border-radius: 6px;
-            padding: 10px;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            transition: border-color 0.2s, background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
         }
 
         .sound-card:hover {
             background-color: var(--card-hover);
-            border-color: #323f57;
+            border-color: #334155;
+            transform: translateY(-2px);
         }
 
         .sound-card.playing {
             border-color: var(--accent-play);
-            background: #111e17;
+            background: rgba(39, 174, 96, 0.08);
         }
 
-        /* TITRES GRANDS ET VISUELS */
         .sound-title-block {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #232c3d;
-            padding-bottom: 4px;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 6px;
         }
 
         .sound-title {
-            font-size: 1.35rem; /* Titre plus grand */
-            font-weight: bold;
+            font-size: 1.05rem;
+            font-weight: 600;
             color: var(--text-title);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
         }
 
         .sound-card.playing .sound-title {
@@ -140,35 +143,34 @@
 
         .sound-id {
             font-family: monospace;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--gold);
-            background: rgba(207, 168, 48, 0.1);
-            padding: 1px 4px;
-            border-radius: 3px;
+            background: rgba(212, 175, 55, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
         }
 
-        /* CONTROLES MINIATURISÉS ET BOUTONS DISCRETE */
         .controls-row {
             display: flex;
-            gap: 4px;
+            gap: 6px;
         }
 
         .btn {
-            font-family: sans-serif;
+            font-family: inherit;
             border: none;
-            padding: 4px 2px; /* Boutons plus petits */
-            border-radius: 4px;
+            padding: 6px 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.75rem;
-            font-weight: bold;
-            transition: all 0.1s;
+            font-weight: 600;
+            transition: all 0.15s;
             text-align: center;
         }
 
         .btn-play {
-            background: #1e271f;
+            background: #0f291e;
             color: #2ecc71;
-            border: 1px solid #27ae6044;
+            border: 1px solid rgba(46, 204, 113, 0.3);
             flex: 2;
         }
         .btn-play:hover {
@@ -177,9 +179,9 @@
         }
 
         .btn-stop {
-            background: #2c1a1a;
+            background: #2c1515;
             color: #e74c3c;
-            border: 1px solid #c0392b44;
+            border: 1px solid rgba(231, 76, 60, 0.3);
             flex: 1;
         }
         .btn-stop:hover {
@@ -188,32 +190,33 @@
         }
 
         .btn-loop {
-            background: #1b222e;
-            color: #7f8c8d;
-            border: 1px solid #283446;
+            background: #111827;
+            color: #64748b;
+            border: 1px solid #1f2937;
             flex: 1.5;
             font-size: 0.7rem;
         }
-        .btn-loop:hover { color: white; background: #253042; }
+        .btn-loop:hover { color: white; background: #1f2937; }
         .btn-loop.active {
-            background: #1a364a;
-            color: #3498db;
-            border-color: #2980b9;
+            background: #0f2b3d;
+            color: #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
         }
 
         .vol-control {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.7rem;
-            color: #526375;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
         }
 
         .vol-control input[type="range"] {
             flex: 1;
             accent-color: var(--gold);
-            height: 3px;
-            background: #10141b;
+            height: 4px;
+            background: #07090c;
+            border-radius: 2px;
             cursor: pointer;
         }
 
@@ -221,45 +224,50 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 0.65rem;
-            color: #526375;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 2px 4px;
-            border-radius: 3px;
+            font-size: 0.7rem;
+            color: #64748b;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 3px 6px;
+            border-radius: 4px;
         }
 
         .delay-control select {
-            background: #171d27;
-            color: #cbd5e1;
-            border: 1px solid #283446;
-            font-size: 0.65rem;
-            border-radius: 2px;
-            padding: 1px;
+            background: #0f131a;
+            color: var(--text-color);
+            border: 1px solid #1e293b;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            padding: 2px;
             cursor: pointer;
         }
 
         .btn-master-stop {
             background: var(--accent-stop);
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             padding: 10px 20px;
-            border-radius: 6px;
+            border-radius: 8px;
             border: none;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
+            letter-spacing: 0.5px;
+            transition: background 0.2s, box-shadow 0.2s;
         }
-        .btn-master-stop:hover { background: #ba2616; box-shadow: 0 0 15px rgba(192, 57, 43, 0.4); }
+        .btn-master-stop:hover { 
+            background: #a93226; 
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); 
+        }
 
         .sub-category {
             grid-column: 1 / -1;
             font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--gold);
             margin-top: 15px;
             margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
+            letter-spacing: 1.5px;
+            font-weight: 700;
             border-left: 3px solid var(--gold);
             padding-left: 8px;
         }
@@ -269,14 +277,14 @@
 <body>
 
     <header>
-        <h1>📜 GRIMOIRE AUDIO — COMPAGNON DE JDR</h1>
+        <h1>📜 Grimoire Audio — Compagnon JDR</h1>
     </header>
 
     <div class="container">
         
         <div class="master-controls">
             <button class="btn-master-stop" onclick="stopAllSounds()">🛑 SILENCE ABSOLU (STOP TOUT)</button>
-            <div class="vol-control" style="width: 260px; color: white; font-weight: bold; font-family: sans-serif;">
+            <div class="vol-control" style="width: 260px; color: var(--text-title); font-weight: 600;">
                 <span>🔊 VOLUME GÉNÉRAL :</span>
                 <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.8" oninput="updateGlobalVolume(this.value)">
             </div>
@@ -295,7 +303,6 @@
     </div>
 
     <script>
-        // Liste propre pointant vers les fichiers renommés en .mp3
         const ambients = [
             { id: "02", name: "Forêt la nuit", cat: "Atmosphères extérieures" },
             { id: "03", name: "Forêt le jour", cat: "Atmosphères extérieures" },
@@ -398,7 +405,6 @@
                     grid.appendChild(catDiv);
                 }
 
-                // Tableau pour stocker les instances actives du même son (Superposition multiple)
                 soundStates[item.id] = {
                     id: item.id,
                     name: item.name,
@@ -451,13 +457,11 @@
             const state = soundStates[id];
             const card = document.getElementById(`card-${id}`);
 
-            // Système de délai actif
             if (state.timer) {
                 clearTimeout(state.timer);
                 state.timer = null;
             }
 
-            // Création d'une nouvelle instance autonome (permet la superposition à intervalle très court)
             const audio = new Audio(state.filename);
             audio.loop = state.isLooping;
             audio.volume = state.volume * globalVolume;
@@ -466,14 +470,12 @@
             card.classList.add('playing');
 
             audio.onended = () => {
-                // Retire l'instance terminée du tableau
                 state.activeAudios = state.activeAudios.filter(a => a !== audio);
                 
                 if (state.activeAudios.length === 0) {
                     card.classList.remove('playing');
                 }
 
-                // Gère la répétition programmée s'il y a un délai
                 if (!state.isLooping && state.delay > 0) {
                     state.timer = setTimeout(() => {
                         playSound(id);
@@ -490,7 +492,6 @@
             const state = soundStates[id];
             const card = document.getElementById(`card-${id}`);
 
-            // Arrête et détruit TOUTES les instances en cours pour ce son
             state.activeAudios.forEach(audio => {
                 audio.pause();
                 audio.currentTime = 0;
@@ -519,7 +520,6 @@
                 loopBtn.classList.remove('active');
             }
 
-            // Applique le changement de boucle en temps réel à ce qui joue
             state.activeAudios.forEach(audio => {
                 audio.loop = state.isLooping;
             });
