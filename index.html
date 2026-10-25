@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grimoire Audio JDR - Mode Tuiles</title>
+    <title>Grimoire Audio JDR</title>
     <style>
         :root {
             --bg-color: #0b0e14;
@@ -23,47 +23,52 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             background-image: radial-gradient(circle at center, #182232 0%, #0b0e14 100%);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* En-tête compact avec titre en haut à droite */
         header {
-            text-align: center;
-            margin-bottom: 20px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 10px 5px 10px;
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            padding-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         h1 { 
             margin: 0; 
-            font-size: 1.6rem; 
+            font-size: 1rem; 
             color: var(--gold); 
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
+        /* Barre principale fixe en haut */
         .master-bar {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             background: var(--panel-bg);
-            padding: 12px 20px;
-            border-radius: 30px;
-            margin-bottom: 20px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-bottom: 15px;
             border: 1px solid rgba(212, 175, 55, 0.3);
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
+            gap: 10px;
         }
 
         .btn-master-stop {
             background: var(--accent-stop);
             color: white;
-            font-size: 0.8rem;
-            padding: 8px 16px;
-            border-radius: 20px;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 15px;
             border: none;
             font-weight: bold;
             cursor: pointer;
@@ -74,125 +79,26 @@
         .global-vol {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.8rem;
+            gap: 8px;
+            font-size: 0.75rem;
             color: #fff;
         }
 
         .global-vol input[type="range"] {
             accent-color: var(--gold);
-            width: 150px;
+            width: 120px;
             cursor: pointer;
         }
 
-        .container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        @media (min-width: 1000px) {
-            .container { grid-template-columns: 1fr 1fr; }
-        }
-
-        .panel {
-            background-color: var(--panel-bg);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            border: 1px solid #222d40;
-        }
-
-        h2 { 
-            font-size: 1.1rem; 
-            color: var(--gold); 
-            margin-top: 0;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #222d40;
-            padding-bottom: 6px;
-        }
-
-        .sound-grid-container {
-            max-height: 70vh;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .sound-grid-container::-webkit-scrollbar { width: 4px; }
-        .sound-grid-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-
-        .tiles-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .sound-tile {
-            background: var(--card-bg);
-            border: 1px solid #27354a;
-            border-radius: 8px;
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-            position: relative;
-            min-height: 45px;
-        }
-
-        .sound-tile:hover {
-            background-color: var(--card-hover);
-            border-color: var(--gold);
-        }
-
-        .sound-tile.playing {
-            border-color: var(--accent-play);
-            background: rgba(46, 204, 113, 0.12);
-            box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
-        }
-
-        .sound-tile.active-panel {
-            border-color: var(--gold);
-            background: var(--card-hover);
-        }
-
-        .tile-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 5px;
-        }
-
-        .sound-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-title);
-            line-height: 1.2;
-        }
-
-        .sound-id {
-            font-family: monospace;
-            font-size: 0.65rem;
-            color: var(--gold);
-            background: rgba(212, 175, 55, 0.1);
-            padding: 1px 4px;
-            border-radius: 4px;
-        }
-
+        /* Fenêtre de contrôle supérieure unifiée */
         .control-drawer {
             display: none;
-            background: #0b0e14;
+            background: #07090d;
             border: 1px solid var(--gold);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
         }
 
         .control-drawer.open {
@@ -203,30 +109,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-bottom: 1px solid #1e293b;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
 
         .drawer-title {
             color: var(--gold-bright);
             font-weight: bold;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
         }
 
         .controls-row {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         .btn {
             font-family: inherit;
             border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: bold;
             transition: all 0.15s;
             text-align: center;
@@ -264,22 +170,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #64748b;
-            gap: 15px;
+            gap: 10px;
         }
 
         .vol-control {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             flex: 1;
         }
 
         .vol-control input[type="range"] {
             flex: 1;
             accent-color: var(--gold);
-            height: 4px;
+            height: 3px;
             background: #131822;
             cursor: pointer;
         }
@@ -288,22 +194,122 @@
             background: #131822;
             color: var(--text-color);
             border: 1px solid #27354a;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            padding: 4px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            padding: 3px;
             cursor: pointer;
         }
 
-        .sub-category {
-            font-size: 0.75rem;
-            color: var(--gold);
-            margin-top: 15px;
-            margin-bottom: 8px;
+        /* Organisation principale en 2 tableaux */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        @media (min-width: 900px) {
+            .container { grid-template-columns: 1fr 1fr; }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            border: 1px solid #222d40;
+            display: flex;
+            flex-direction: column;
+            max-height: 75vh;
+        }
+
+        h2 { 
+            font-size: 0.95rem; 
+            color: var(--gold); 
+            margin: 0 0 10px 0;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222d40;
+            padding-bottom: 5px;
+        }
+
+        /* Seule la zone des tuiles défile */
+        .sound-grid-container {
+            overflow-y: auto;
+            padding-right: 4px;
+            flex: 1;
+        }
+
+        .sound-grid-container::-webkit-scrollbar { width: 4px; }
+        .sound-grid-container::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+        /* Grille adaptative : 4-5 en PC, 3 en GSM */
+        .tiles-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 par défaut (GSM) */
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .tiles-container {
+                grid-template-columns: repeat(5, 1fr); /* 5 en mode PC */
+            }
+        }
+
+        .sound-tile {
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 8px 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+            min-height: 38px;
+            text-align: center;
+        }
+
+        .sound-tile:hover {
+            background-color: var(--card-hover);
+            filter: brightness(1.2);
+        }
+
+        .sound-tile.playing {
+            border: 1px solid var(--accent-play) !important;
+            background: rgba(46, 204, 113, 0.15);
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.3);
+        }
+
+        .sound-tile.active-panel {
+            border: 1px solid var(--gold) !important;
+            background: var(--card-hover);
+        }
+
+        .sound-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .sound-id {
+            font-family: monospace;
+            font-size: 0.55rem;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        .sub-category {
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin: 10px 0 5px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             font-weight: bold;
             border-left: 2px solid var(--gold);
-            padding-left: 6px;
+            padding-left: 5px;
         }
     </style>
 </head>
@@ -316,7 +322,7 @@
     <div class="master-bar">
         <button class="btn-master-stop" onclick="stopAllSounds()">🛑 SILENCE ABSOLU</button>
         <div class="global-vol">
-            <span>🔊 VOLUME GÉNÉRAL</span>
+            <span>🔊 VOLUME</span>
             <input type="range" id="global-volume" min="0" max="1" step="0.05" value="0.8" oninput="updateGlobalVolume(this.value)">
         </div>
     </div>
@@ -325,105 +331,103 @@
         <!-- Panel Ambiances -->
         <div class="panel">
             <h2>🎵 Ambiances Continues</h2>
-            <div class="sound-grid-container" id="ambient-grid-container">
-                <div id="drawer-ambient" class="control-drawer"></div>
-            </div>
+            <div id="drawer-ambient" class="control-drawer"></div>
+            <div class="sound-grid-container" id="ambient-grid-container"></div>
         </div>
 
         <!-- Panel Effets -->
         <div class="panel">
             <h2>💥 Effets & Déclencheurs</h2>
-            <div class="sound-grid-container" id="oneshot-grid-container">
-                <div id="drawer-oneshot" class="control-drawer"></div>
-            </div>
+            <div id="drawer-oneshot" class="control-drawer"></div>
+            <div class="sound-grid-container" id="oneshot-grid-container"></div>
         </div>
     </div>
 
     <script>
         const ambients = [
-            { id: "02", name: "Forêt la nuit", cat: "Extérieurs" },
-            { id: "03", name: "Forêt le jour", cat: "Extérieurs" },
-            { id: "04", name: "Lande désolée", cat: "Extérieurs" },
-            { id: "05", name: "Marécage / marais", cat: "Extérieurs" },
-            { id: "06", name: "Bord de falaise", cat: "Extérieurs" },
-            { id: "07", name: "Pluie légère", cat: "Extérieurs" },
-            { id: "08", name: "Orage violent", cat: "Extérieurs" },
-            { id: "09", name: "Nuit d'hiver", cat: "Extérieurs" },
+            { id: "02", name: "Forêt la nuit", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "03", name: "Forêt le jour", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "04", name: "Lande désolée", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "05", name: "Marécage / marais", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "06", name: "Bord de falaise", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "07", name: "Pluie légère", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "08", name: "Orage violent", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
+            { id: "09", name: "Nuit d'hiver", cat: "Extérieurs", color: "#3498db", textCol: "#ebf5fb" },
             
-            { id: "10", name: "Donjon / crypte", cat: "Intérieurs" },
-            { id: "11", name: "Cave / souterrain", cat: "Intérieurs" },
-            { id: "12", name: "Taverne animée", cat: "Intérieurs" },
-            { id: "13", name: "Taverne calme", cat: "Intérieurs" },
-            { id: "14", name: "Bibliothèque", cat: "Intérieurs" },
-            { id: "15", name: "Forge", cat: "Intérieurs" },
-            { id: "16", name: "Église / cathédrale", cat: "Intérieurs" },
-            { id: "17", name: "Cachot / cellule", cat: "Intérieurs" },
+            { id: "10", name: "Donjon / crypte", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "11", name: "Cave / souterrain", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "12", name: "Taverne animée", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "13", name: "Taverne calme", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "14", name: "Bibliothèque", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "15", name: "Forge", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "16", name: "Église / cathédrale", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
+            { id: "17", name: "Cachot / cellule", cat: "Intérieurs", color: "#9b59b6", textCol: "#f4ecf7" },
 
-            { id: "18", name: "Combat général", cat: "Combat & Tension" },
-            { id: "19", name: "Combat rapproché", cat: "Combat & Tension" },
-            { id: "20", name: "Armée en marche", cat: "Combat & Tension" },
-            { id: "21", name: "Siège / assaut", cat: "Combat & Tension" },
-            { id: "22", name: "Suspense / danger", cat: "Combat & Tension" },
-            { id: "23", name: "Poursuite / fuite", cat: "Combat & Tension" },
+            { id: "18", name: "Combat général", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
+            { id: "19", name: "Combat rapproché", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
+            { id: "20", name: "Armée en marche", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
+            { id: "21", name: "Siège / assaut", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
+            { id: "22", name: "Suspense / danger", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
+            { id: "23", name: "Poursuite / fuite", cat: "Combat & Tension", color: "#e74c3c", textCol: "#f9ebea" },
 
-            { id: "24", name: "Mort d'un héros", cat: "Narratif & Émotions" },
-            { id: "25", name: "Victoire", cat: "Narratif & Émotions" },
-            { id: "26", name: "Cérémonie solennelle", cat: "Narratif & Émotions" },
-            { id: "27", name: "Magie sombre", cat: "Narratif & Émotions" },
-            { id: "28", name: "Émerveillement", cat: "Narratif & Émotions" },
-            { id: "29", name: "Mélancolie / deuil", cat: "Narratif & Émotions" },
-            { id: "30", name: "Encouragement / bravoure", cat: "Narratif & Émotions" },
-            { id: "31", name: "Découragement / défaite", cat: "Narratif & Émotions" },
-            { id: "32", name: "Investigation / mystère", cat: "Narratif & Émotions" },
-            { id: "33", name: "Village / marché", cat: "Narratif & Émotions" },
-            { id: "34", name: "Feu de camp", cat: "Narratif & Émotions" },
-            { id: "35", name: "Voyage en forêt", cat: "Narratif & Émotions" },
-            { id: "59", name: "Fin de champ de bataille", cat: "Narratif & Émotions" }
+            { id: "24", name: "Mort d'un héros", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "25", name: "Victoire", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "26", name: "Cérémonie solennelle", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "27", name: "Magie sombre", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "28", name: "Émerveillement", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "29", name: "Mélancolie / deuil", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "30", name: "Encouragement / bravoure", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "31", name: "Découragement / défaite", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "32", name: "Investigation / mystère", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "33", name: "Village / marché", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "34", name: "Feu de camp", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "35", name: "Voyage en forêt", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" },
+            { id: "59", name: "Fin de champ de bataille", cat: "Narratif & Émotions", color: "#f39c12", textCol: "#fef9e7" }
         ];
 
         const oneshots = [
-            { id: "36", name: "Porte en bois claquée", cat: "Environnement" },
-            { id: "37", name: "Porte qui grince", cat: "Environnement" },
-            { id: "38", name: "Trappe qui s'ouvre", cat: "Environnement" },
-            { id: "39", name: "Grille de cachot", cat: "Environnement" },
-            { id: "40", name: "Coup d'épée", cat: "Armes & Combat" },
-            { id: "41", name: "Lame dégainée", cat: "Armes & Combat" },
-            { id: "42", name: "Flèche + impact", cat: "Armes & Combat" },
-            { id: "43", name: "Coup de masse / marteau", cat: "Armes & Combat" },
-            { id: "44", name: "Bouclier frappé", cat: "Armes & Combat" },
-            { id: "45", name: "Coup de poing", cat: "Armes & Combat" },
-            { id: "46", name: "Explosion petite", cat: "Destructions" },
-            { id: "47", name: "Explosion grande", cat: "Destructions" },
-            { id: "48", name: "Verre brisé", cat: "Destructions" },
-            { id: "49", name: "Bois fracassé", cat: "Destructions" },
-            { id: "50", name: "Mur s'effondre", cat: "Destructions" },
-            { id: "51", name: "Tonnerre proche", cat: "Nature" },
-            { id: "52", name: "Tonnerre lointain", cat: "Nature" },
-            { id: "53", name: "Aboiement de chien", cat: "Nature" },
-            { id: "54", name: "Cri de corbeau", cat: "Nature" },
-            { id: "55", name: "Cheval hennit", cat: "Nature" },
-            { id: "56", name: "Loup qui hurle", cat: "Nature" },
-            { id: "57", name: "Rat / petite créature", cat: "Nature" },
-            { id: "58", name: "Troupe en marche", cat: "Actions" },
-            { id: "60", name: "Grognement de monstre", cat: "Actions" },
-            { id: "61", name: "Rire sinistre", cat: "Actions" },
-            { id: "62", name: "Chuchotement étrange", cat: "Actions" },
-            { id: "63", name: "Pas sur pierre", cat: "Actions" },
-            { id: "64", name: "Pas furtifs", cat: "Actions" },
-            { id: "65", name: "Corps qui tombe", cat: "Actions" },
-            { id: "66", name: "Chaînes secouées", cat: "Objets" },
-            { id: "67", name: "Cor de chasse", cat: "Objets" },
-            { id: "68", name: "Cloche d'église (1 coup)", cat: "Objets" },
-            { id: "69", name: "Clochette d'alarme", cat: "Objets" },
-            { id: "70", name: "Parchemin déplié", cat: "Objets" },
-            { id: "71", name: "Sac de pièces d'or", cat: "Objets" },
-            { id: "72", name: "Verrou tiré", cat: "Objets" },
-            { id: "73", name: "Livre ouvert / fermé", cat: "Objets" },
-            { id: "74", name: "Sort lancé (lumineux)", cat: "Magie" },
-            { id: "75", name: "Sort lancé (sombre)", cat: "Magie" },
-            { id: "76", name: "Explosion magique", cat: "Magie" },
-            { id: "77", name: "Téléportation", cat: "Magie" },
-            { id: "78", name: "Objet maudit", cat: "Magie" }
+            { id: "36", name: "Porte en bois claquée", cat: "Environnement", color: "#16a085", textCol: "#e8f8f5" },
+            { id: "37", name: "Porte qui grince", cat: "Environnement", color: "#16a085", textCol: "#e8f8f5" },
+            { id: "38", name: "Trappe qui s'ouvre", cat: "Environnement", color: "#16a085", textCol: "#e8f8f5" },
+            { id: "39", name: "Grille de cachot", cat: "Environnement", color: "#16a085", textCol: "#e8f8f5" },
+            { id: "40", name: "Coup d'épée", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "41", name: "Lame dégainée", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "42", name: "Flèche + impact", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "43", name: "Coup de masse / marteau", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "44", name: "Bouclier frappé", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "45", name: "Coup de poing", cat: "Armes & Combat", color: "#c0392b", textCol: "#fadbd8" },
+            { id: "46", name: "Explosion petite", cat: "Destructions", color: "#d35400", textCol: "#fef5e7" },
+            { id: "47", name: "Explosion grande", cat: "Destructions", color: "#d35400", textCol: "#fef5e7" },
+            { id: "48", name: "Verre brisé", cat: "Destructions", color: "#d35400", textCol: "#fef5e7" },
+            { id: "49", name: "Bois fracassé", cat: "Destructions", color: "#d35400", textCol: "#fef5e7" },
+            { id: "50", name: "Mur s'effondre", cat: "Destructions", color: "#d35400", textCol: "#fef5e7" },
+            { id: "51", name: "Tonnerre proche", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "52", name: "Tonnerre lointain", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "53", name: "Aboiement de chien", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "54", name: "Cri de corbeau", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "55", name: "Cheval hennit", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "56", name: "Loup qui hurle", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "57", name: "Rat / petite créature", cat: "Nature", color: "#2980b9", textCol: "#ebf5fb" },
+            { id: "58", name: "Troupe en marche", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "60", name: "Grognement de monstre", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "61", name: "Rire sinistre", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "62", name: "Chuchotement étrange", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "63", name: "Pas sur pierre", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "64", name: "Pas furtifs", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "65", name: "Corps qui tombe", cat: "Actions", color: "#7f8c8d", textCol: "#f2f4f4" },
+            { id: "66", name: "Chaînes secouées", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "67", name: "Cor de chasse", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "68", name: "Cloche d'église (1 coup)", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "69", name: "Clochette d'alarme", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "70", name: "Parchemin déplié", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "71", name: "Sac de pièces d'or", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "72", name: "Verrou tiré", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "73", name: "Livre ouvert / fermé", cat: "Objets", color: "#d1ac00", textCol: "#fef9e7" },
+            { id: "74", name: "Sort lancé (lumineux)", cat: "Magie", color: "#8e44ad", textCol: "#f5eef8" },
+            { id: "75", name: "Sort lancé (sombre)", cat: "Magie", color: "#8e44ad", textCol: "#f5eef8" },
+            { id: "76", name: "Explosion magique", cat: "Magie", color: "#8e44ad", textCol: "#f5eef8" },
+            { id: "77", name: "Téléportation", cat: "Magie", color: "#8e44ad", textCol: "#f5eef8" },
+            { id: "78", name: "Objet maudit", cat: "Magie", color: "#8e44ad", textCol: "#f5eef8" }
         ];
 
         let globalVolume = 0.8;
@@ -461,13 +465,13 @@
                 const tile = document.createElement('div');
                 tile.className = 'sound-tile';
                 tile.id = `tile-${item.id}`;
+                tile.style.border = `1px solid ${item.color}55`;
+                tile.style.backgroundColor = `${item.color}15`;
                 tile.onclick = () => openDrawer(item.id, containerId, drawerId);
 
                 tile.innerHTML = `
-                    <div class="tile-header" style="width:100%;">
-                        <span class="sound-title">${item.name}</span>
-                        <span class="sound-id">#${item.id}</span>
-                    </div>
+                    <span class="sound-title" style="color: ${item.textCol};">${item.name}</span>
+                    <span class="sound-id" style="color: ${item.color};">#${item.id}</span>
                 `;
                 currentGrid.appendChild(tile);
             });
@@ -485,7 +489,7 @@
             drawer.innerHTML = `
                 <div class="drawer-header">
                     <span class="drawer-title">🎛️ Contrôles : ${item.name} (#${item.id})</span>
-                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}', '${containerId}')">✕ Fermer</button>
+                    <button class="btn" style="background:#1e293b; color:#fff; padding:2px 6px;" onclick="closeDrawer('${drawerId}', '${containerId}')">✕</button>
                 </div>
                 <div class="controls-row">
                     <button class="btn btn-play" onclick="playSound('${id}')">▶ Lancer</button>
